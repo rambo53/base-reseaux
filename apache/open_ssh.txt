@@ -1,0 +1,7 @@
+sudo apt install openssh-server
+
+sudo systemctl enable ssh
+
+sudo systemctl start ssh
+
+Puis dans le dossier "etc/ssh/sshd_config", modifier le port, exemple "1234"
