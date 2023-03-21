@@ -5,3 +5,82 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 
 Puis dans le dossier "etc/ssh/sshd_config", modifier le port, exemple "1234"
+
+
+Attention en local paramétrer la vm dans virtual box , sur configuration, réseaux, sélectionner "accès par pont"
+
+
+////////////////////////////////////////
+
+- generer un certificat ssl en une ligne :
+openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout server.key -out server.crt
+
+////////////////////////////////////////
+
+Pour avoir un site securisée, il vous faut un certificat
+
+
+Dans le cours on fait un cert autosigné (openssl)
+
+- Etape 1: openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/ssl/private/server.key -out /etc/ssl/private/server.crt
+On va generer le certificat avec les informations que l'on va mettre dedans, et le signer nous meme
+
+- Etape 2: a2enmod ssl
+on active le module apache ssl
+
+- Etape 3: /etc/apache2/sites-availables/mondomaine.fr-ssl.conf && a2ensite mondomaine.fr-ssl.conf
+On créé/configure un virtualhost sur le port 443 
+On active SSL et on donne le chemin vers le .key et .cert
+
+- Etape 4 : a2ensite mondomaine.fr-ssl.conf
+Activer le nouveau virtualhost
+
+- ETape 5 : systemctl restart apache2
+Redémarrer apache
+
+Note: par defaut, quand on tape un FDQN, le navigateur va attaquer le HTTP, 
+Ce qui veut dire que notre virtualhost en 80 DOIT faire une redirection vers le Vhost en 443 pour attaquer par defaut notre site sécurisée
+
+Dans le virtual 80, decommenter DocumentRoot si présent et ajouter : Redirect / https://www.mondomaine.fr
+
+////////////////////////////////////////
+
+apt install apache2
+systemctl status/start/stop/restart apache2
+
+fichier de conf : /etc/apache2
+fichier globale de conf: apache2.conf
+
+Fichier virtualhosts: /etc/apache2/sites-available 
+Fichiers activés virtualhost : /etc/apache2/sites-available/*.conf
+
+
+
+- Fichier par default : 000-default.conf
+
+<VirtualHost */80>
+	DocumentRoot /var/www/html
+</VirtualHost>
+
+
+- Plusieurs virtualhosts:
+/etc/apache2/sites-availables:
+
+- virtualhost : www.arno.fr.conf :
+
+<VirtualHost *:80>
+	DocumentRoot /var/www/www.arno.fr
+	ServerName www.arno.fr
+</VirtualHost>
+
+- activer le virtualhost: a2ensite www.arno.fr
+
+- faire prendre en compte la nouvelle config: systemctl restart apache2
+
+- changer le proprietaire apache pour notre dossier : chown -R www-data:www-data /var/www/www.arno.fr/
+
+- Page index :
+Par default, dans les dossiers web,apache il va charger le fichier index.html ou index.php
+
+Sinon vous pouvez mettre une page custom par defaut, en ajoutant la directive:
+DirectoryIndex home.html
