@@ -1,86 +1,39 @@
-sudo apt install openssh-server
+Pour héberger mon site et le rendre accessible sur internet, j'utilise apache, une fois chargé avec :
 
-sudo systemctl enable ssh
+- apt-get install apache2
 
-sudo systemctl start ssh
+Dans le répertoire "etc" on retrouvera le dossier "apache2", on rentre dedans puis dans "sites-available".
 
-Puis dans le dossier "etc/ssh/sshd_config", modifier le port, exemple "1234"
+On copie le fichier "000-default.conf" en le modifiant avec le nom de mon site :
 
+- cp 000-default.conf monsite.local.conf
 
-Attention en local paramétrer la vm dans virtual box , sur configuration, réseaux, sélectionner "accès par pont"
+A l'intérieur de ce fichier je paramètre :
 
+ServerName monsitetest.local
+ServerAlias www.monsitetest.local
+DocumentRoot /home/monsitetest/www	** le lieu où j'ai mis mon site, ça pourrait être dans var/www"**
 
-////////////////////////////////////////
+Je redémarre mon serveur :cd cnan
 
-- generer un certificat ssl en une ligne :
-openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout server.key -out server.crt
+- sudo systemctl restart apache2.service
 
-////////////////////////////////////////
+J'active mon site avec la commande :
 
-Pour avoir un site securisée, il vous faut un certificat
+- sudo a2ensite monsitetest.local
 
+/////////////////////////////////////////////////////
 
-Dans le cours on fait un cert autosigné (openssl)
+Si ne fonctionne pas, allez dans etc/apache2/apache2.conf ajouter :
 
-- Etape 1: openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -keyout /etc/ssl/private/server.key -out /etc/ssl/private/server.crt
-On va generer le certificat avec les informations que l'on va mettre dedans, et le signer nous meme
+<Directory /home/>
+	Options Indexes FollowSymLinks
+	AllowOverride all
+	Require all granted
+</Directory>
 
-- Etape 2: a2enmod ssl
-on active le module apache ssl
+/////////////////////////////////////////////////////
 
-- Etape 3: /etc/apache2/sites-availables/mondomaine.fr-ssl.conf && a2ensite mondomaine.fr-ssl.conf
-On créé/configure un virtualhost sur le port 443 
-On active SSL et on donne le chemin vers le .key et .cert
+Pour tester en local sur ma machine windows, je cherche l'application bloc-notes, je fais un click droit pour ouvrir en tant qu'administrateur, puis je click sur fichier, je me rends dans "C:\Windows\System32\drivers\etc" je fais "afficher tout", puis je sélectionne le fichier "hosts" je rentre l'ip de ma vm puis l'adresse de mon site :
 
-- Etape 4 : a2ensite mondomaine.fr-ssl.conf
-Activer le nouveau virtualhost
-
-- ETape 5 : systemctl restart apache2
-Redémarrer apache
-
-Note: par defaut, quand on tape un FDQN, le navigateur va attaquer le HTTP, 
-Ce qui veut dire que notre virtualhost en 80 DOIT faire une redirection vers le Vhost en 443 pour attaquer par defaut notre site sécurisée
-
-Dans le virtual 80, decommenter DocumentRoot si présent et ajouter : Redirect / https://www.mondomaine.fr
-
-////////////////////////////////////////
-
-apt install apache2
-systemctl status/start/stop/restart apache2
-
-fichier de conf : /etc/apache2
-fichier globale de conf: apache2.conf
-
-Fichier virtualhosts: /etc/apache2/sites-available 
-Fichiers activés virtualhost : /etc/apache2/sites-available/*.conf
-
-
-
-- Fichier par default : 000-default.conf
-
-<VirtualHost */80>
-	DocumentRoot /var/www/html
-</VirtualHost>
-
-
-- Plusieurs virtualhosts:
-/etc/apache2/sites-availables:
-
-- virtualhost : www.arno.fr.conf :
-
-<VirtualHost *:80>
-	DocumentRoot /var/www/www.arno.fr
-	ServerName www.arno.fr
-</VirtualHost>
-
-- activer le virtualhost: a2ensite www.arno.fr
-
-- faire prendre en compte la nouvelle config: systemctl restart apache2
-
-- changer le proprietaire apache pour notre dossier : chown -R www-data:www-data /var/www/www.arno.fr/
-
-- Page index :
-Par default, dans les dossiers web,apache il va charger le fichier index.html ou index.php
-
-Sinon vous pouvez mettre une page custom par defaut, en ajoutant la directive:
-DirectoryIndex home.html
+- 192.168.1.97 monsitetest.local
