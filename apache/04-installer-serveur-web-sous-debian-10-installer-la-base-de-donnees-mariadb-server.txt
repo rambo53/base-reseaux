@@ -1,0 +1,82 @@
+
+Se connecter:
+-----------------------
+mysql -u root -p
+
+
+CREER UN UTILISATEUR:
+CREATE USER 'mickael'@'localhost' IDENTIFIED BY 'motdepasse';
+
+
+
+ASSOCIER UN UTILISATEUR A UNE BDD:
+GRANT ALL ON wordpress.* TO 'mickael'@'localhost';
+
+DONNER LES DROITS ROOT (TOUS LES DROITS) A L'UTILISATEUR:
+------------------------------------------------------------
+GRANT ALL PRIVILEGES ON *.* TO 'supermickael'@'localhost' IDENTIFIED BY 'supermotdepasse' WITH GRANT OPTION;
+
+
+GRANT GRANT OPTION ON *.* TO 'supermickael'@'localhost';
+
+
+GRANT ON *.* TO 'supermickael'@'localhost' WITH GRANT OPTION;
+
+Liste toutes les bases:
+SHOW DATABASES;
+
+
+-------------------------------
+https://linuxhint.com/install_phpmyadmin_debian_10/
+https://www.tecmint.com/install-mariadb-database-in-debian-10/
+https://www.oreilly.com/library/view/learning-mysql/0596008643/ch09s04.html
+
+
+Extension mysqli erreur:
+sudo apt-get install php7.4-mysql
+ensuite, penser a rebooter apache2
+
+Autre erreur:
+Composer detected issues in your platform: Your Composer dependencies require the following PHP extensions to be installed: mysqli, xml
+
+
+
+
+
+--------------------nextcloud
+https://www.linuxtricks.fr/wiki/debian-installer-nextcloud
+https://cloudcone.com/docs/article/how-to-install-nextcloud-on-debian-10/
+
+
+
+
+----------- https avec lets encrypt
+https://www.tecmint.com/setup-free-ssl-certificate-for-apache-on-debian-10/
+https://www.xpresservers.com/how-to-secure-apache-with-lets-encrypt-on-debian-10/
+
+
+
+----------- CONFIGURER PROFTP EN TLS:
+https://memo-linux.com/comment-installer-un-serveur-ftp-securise-sous-debian-squeeze/
+https://www.kinamo.fr/fr/support/faq/se-connecter-par-ftp-avec-le-plateforme-hebergement-kinamo-par-ftp-tls-ftp-
+
+
+
+
+---------- activer le mode rewrite url (par exemple pour wordpress):
+a2enmod rewrite
+
+En général, Apache ignore le .htaccessfichier en raison de la configuration Apache suivante AllowOverride none
+AllowOverride All
+
+https://www.digitalocean.com/community/tutorials/how-to-rewrite-urls-with-mod-rewrite-for-apache-on-debian-10
+https://docs.bolt.cm/4.0/howto/making-sure-htaccess-works
+
+
+
+
+
+
+
+#7c1617  #CF2929
+
